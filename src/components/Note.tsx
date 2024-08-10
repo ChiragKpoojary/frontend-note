@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Alert } from "@material-tailwind/react";
 
-import axios from "Axios";
+import axios from "axios";
 
 
 

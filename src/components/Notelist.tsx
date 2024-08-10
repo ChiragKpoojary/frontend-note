@@ -4,8 +4,8 @@ import { FaRegLightbulb } from "react-icons/fa6";
 import {  useState,useEffect} from 'react';
 import {  atom, useRecoilState } from 'recoil';
 import {Noteinter} from './NavSearch'; 
-import axios from "Axios";
-import { AxiosResponse } from 'Axios';
+import axios from "axios";
+import { AxiosResponse } from 'axios';
 
 const noteState = atom<Noteinter[]>({
   key: 'noteState',
