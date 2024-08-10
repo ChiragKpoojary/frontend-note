@@ -93,7 +93,7 @@ function TagInput({ tags, setTags,empty }: { tags: string[], setTags: React.Disp
     try {
 
         console.log("Successfully sent to db");
-         await axios.post('http://localhost:8000/api/creatednote', {
+         await axios.post('https://backend-note-2px9.onrender.com/api/creatednote', {
 
           title: Title,
 

@@ -61,7 +61,7 @@ function NotesList() {
   const [boxes, setBoxes] = useRecoilState(noteState);
 
   useEffect(() => {
-     axios.get("http://localhost:8000/api/showdata").then(
+     axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
 (res:AxiosResponse)=>{
   console.log("result is useeffect",res.data);
 

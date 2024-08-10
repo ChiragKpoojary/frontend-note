@@ -2,8 +2,8 @@ import { useRecoilState } from 'recoil';
 import { noteState } from './Notelist';
 import Fuse from 'fuse.js';
 import { ChangeEvent, useState, useEffect } from 'react';
-import axios from "Axios"
-
+import axios from "axios"
+import { AxiosResponse } from "axios";
 export interface Noteinter {
     _id: string;
     title: string;
@@ -19,8 +19,8 @@ const NavSearch = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [data,setdata]=useState([]);
     useEffect(() => {
-        axios.get("http://localhost:8000/api/showdata").then(
-   (res)=>{
+        axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
+   (res:AxiosResponse)=>{
      console.log("result is useeffect i search",res.data);
    
     setdata(res.data);
