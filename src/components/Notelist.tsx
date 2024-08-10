@@ -5,6 +5,7 @@ import {  useState,useEffect} from 'react';
 import {  atom, useRecoilState } from 'recoil';
 import {Noteinter} from './NavSearch'; 
 import axios from "Axios";
+import { AxiosResponse } from 'Axios';
 
 const noteState = atom<Noteinter[]>({
   key: 'noteState',
@@ -61,7 +62,7 @@ function NotesList() {
 
   useEffect(() => {
      axios.get("http://localhost:8000/api/showdata").then(
-(res)=>{
+(res:AxiosResponse)=>{
   console.log("result is useeffect",res.data);
 
  setBoxes(res.data);
