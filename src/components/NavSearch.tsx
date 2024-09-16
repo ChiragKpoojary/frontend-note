@@ -19,7 +19,7 @@ export interface Noteinter {
 
 const NavSearch = () => {
     const [searchlist, setsearchlist] = useRecoilState<Noteinter[]>(noteState);
-    const [isAuthenticated, setIsAuthenticated] = useRecoilState(authState);
+    const [, setIsAuthenticated] = useRecoilState(authState);
     const [searchQuery, setSearchQuery] = useState('');
     const [data,setdata]=useState([]);
     const [showForm, setShowForm] = useState(false);

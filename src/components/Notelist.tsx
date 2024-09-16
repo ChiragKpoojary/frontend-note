@@ -14,7 +14,7 @@ const noteState = atom<Noteinter[]>({
   default: [],
 });
 export const NoteCard = ({ note, isAuthenticated }: { note: any, isAuthenticated: boolean }) => {
-  const [boxes, setBoxes] = useRecoilState(noteState);
+  const [, setBoxes] = useRecoilState(noteState);
       const password = useRecoilValue(passwordState);
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 100;
