@@ -12,7 +12,7 @@ function App1() {
   const [isServerReady, setIsServerReady] = useState(false);
 
   function checkServerStatus() {
-    fetch('http://localhost:8000/health')
+    fetch('https://backend-note-2px9.onrender.com/health')
       .then(response => response.json())
       .then(data => {
         if (data.status === 'ok') {
