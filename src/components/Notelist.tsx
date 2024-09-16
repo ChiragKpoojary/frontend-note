@@ -1,29 +1,66 @@
 
-import { Typography, Card, Chip,Button } from "@material-tailwind/react";
+import { Typography, Card, Chip,Button,IconButton } from "@material-tailwind/react";
 import { FaRegLightbulb } from "react-icons/fa6";
 import {  useState,useEffect} from 'react';
-import {  atom, useRecoilState } from 'recoil';
+import {  atom, useRecoilState, useRecoilValue } from 'recoil';
 import {Noteinter} from './NavSearch'; 
 import axios from "axios";
 import { AxiosResponse } from 'axios';
-
+import { authState } from './authstate';
+import { MdDelete } from 'react-icons/md';
+import {passwordState} from './password';
 const noteState = atom<Noteinter[]>({
   key: 'noteState',
   default: [],
 });
-export const NoteCard =(({ note }: { note: any }) => {
-
+export const NoteCard = ({ note, isAuthenticated }: { note: any, isAuthenticated: boolean }) => {
+  const [boxes, setBoxes] = useRecoilState(noteState);
+      const password = useRecoilValue(passwordState);
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 100;
+
   const truncateText = (text: string, length: number) => {
     if (text.length <= length) return text;
     return text.substr(0, length) + '...';
   };
 
+
+  const handleDelete = () => {
+
+
+    fetch(`https://backend-note-2px9.onrender.com/api/delete/${note._id}`, {
+      method: 'DELETE',
+      headers: {
+       'Content-Type': 'application/json',
+    'passcode': password, 
+      },
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result) {
+        alert('Note deleted successfully');
+        axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
+          (res:AxiosResponse)=>{
+
+          
+           setBoxes(res.data);
+          
+          
+          }
+          
+          ).catch((e)=>{
+          console.log("error while fetching",e);
+          })
+      } else {
+        alert('Failed to delete note');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  };
+
   return (
     <Card 
-      
-      className={`shadow-2xl p-5 w-full max-w-sm overflow-hidden h-fit relative bg-gray-300 rounded-md  border-gray-200 m-5 `}
+      className={`shadow-2xl p-5 w-full max-w-sm overflow-hidden h-fit relative bg-gray-300 rounded-md border-gray-200 m-5`}
     >
       <div className='flex flex-col'>
         <Typography variant="h5" className="pb-3 font-bold break-all">{note.title}</Typography>
@@ -50,20 +87,28 @@ export const NoteCard =(({ note }: { note: any }) => {
             {isExpanded ? 'Show Less' : 'Read More'}
           </Button>
         )}
+        {isAuthenticated && (
+          <IconButton
+            className=" text-red-500 bg-white mt-3"
+            onClick={handleDelete}
+          >
+            <MdDelete size={24} />
+          </IconButton>
+        )}
       </div>
     </Card>
   );
-});
+};
 function NotesList() {
 
-
-
+  
+  const isAuthenticated = useRecoilValue(authState);
   const [boxes, setBoxes] = useRecoilState(noteState);
 
   useEffect(() => {
      axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
 (res:AxiosResponse)=>{
-  console.log("result is useeffect",res.data);
+
 
  setBoxes(res.data);
 
@@ -76,7 +121,7 @@ console.log("error while fetching",e);
 }, [])
  
  
-console.log("data in boxes",boxes)
+
 
 
 
@@ -95,7 +140,7 @@ console.log("data in boxes",boxes)
                
                   
                    <div key={index} className="flex justify-center items-center">
-                      <NoteCard note={note} />
+                      <NoteCard note={note} isAuthenticated={isAuthenticated}/>
                    </div>
             
     

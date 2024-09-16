@@ -17,6 +17,7 @@ function App1() {
         <Routes>
           <Route path="/" element={<div> <Search/> <CreateNote/> <NotesList/></div>}/>
           <Route path="/Note" element={<Note/>}/>
+          
         </Routes>
         </RecoilRoot>
     </div>

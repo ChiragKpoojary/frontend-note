@@ -88,11 +88,11 @@ function TagInput({ tags, setTags,empty }: { tags: string[], setTags: React.Disp
      setempty(!empty);
    
     }else{
-     console.log("Successfully sent to db");
+     
      // http://localhost:8080/api/creatednote
     try {
 
-        console.log("Successfully sent to db");
+
          await axios.post('https://backend-note-2px9.onrender.com/api/creatednote', {
 
           title: Title,
@@ -103,7 +103,7 @@ function TagInput({ tags, setTags,empty }: { tags: string[], setTags: React.Disp
 
         });
 
-        console.log("Successfully sent to db bro");
+    
 
       } catch (e) {
 
@@ -114,7 +114,7 @@ function TagInput({ tags, setTags,empty }: { tags: string[], setTags: React.Disp
            setTitle(" ");
       setTags([]);
       setDescription(" ");
-  console.log("Navigating to home..."); 
+
       navigate("/");
      
    
