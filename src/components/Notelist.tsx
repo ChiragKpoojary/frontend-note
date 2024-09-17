@@ -1,21 +1,22 @@
-
-import { Typography, Card, Chip,Button,IconButton } from "@material-tailwind/react";
+import { Typography, Card, Chip, Button, IconButton } from "@material-tailwind/react";
 import { FaRegLightbulb } from "react-icons/fa6";
-import {  useState,useEffect} from 'react';
-import {  atom, useRecoilState, useRecoilValue } from 'recoil';
-import {Noteinter} from './NavSearch'; 
+import { useState, useEffect } from 'react';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { Noteinter } from './NavSearch'; 
 import axios from "axios";
 import { AxiosResponse } from 'axios';
 import { authState } from './authstate';
 import { MdDelete } from 'react-icons/md';
-import {passwordState} from './password';
+import { passwordState } from './password';
+
 const noteState = atom<Noteinter[]>({
   key: 'noteState',
   default: [],
 });
+
 export const NoteCard = ({ note, isAuthenticated }: { note: any, isAuthenticated: boolean }) => {
   const [, setBoxes] = useRecoilState(noteState);
-      const password = useRecoilValue(passwordState);
+  const password = useRecoilValue(passwordState);
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 100;
 
@@ -24,43 +25,35 @@ export const NoteCard = ({ note, isAuthenticated }: { note: any, isAuthenticated
     return text.substr(0, length) + '...';
   };
 
-
   const handleDelete = () => {
-
-
     fetch(`https://backend-note-2px9.onrender.com/api/delete/${note._id}`, {
       method: 'DELETE',
       headers: {
-       'Content-Type': 'application/json',
-    'passcode': password, 
+        'Content-Type': 'application/json',
+        'passcode': password,
       },
     })
-    .then(response => response.json())
-    .then(result => {
-      if (result) {
-        alert('Note deleted successfully');
-        axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
-          (res:AxiosResponse)=>{
-
-          
-           setBoxes(res.data);
-          
-          
-          }
-          
-          ).catch((e)=>{
-          console.log("error while fetching",e);
+      .then(response => response.json())
+      .then(result => {
+        if (result) {
+          alert('Note deleted successfully');
+          axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
+            (res: AxiosResponse) => {
+              setBoxes(res.data);
+            }
+          ).catch((e) => {
+            console.log("error while fetching", e);
           })
-      } else {
-        alert('Failed to delete note');
-      }
-    })
-    .catch(error => console.error('Error:', error));
+        } else {
+          alert('Failed to delete note');
+        }
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   return (
     <Card 
-      className={`shadow-2xl p-5 w-full max-w-sm overflow-hidden h-fit relative bg-gray-300 rounded-md border-gray-200 m-5`}
+      className={`shadow-2xl p-5 w-full max-w-sm xl:max-w-xl overflow-hidden h-fit relative bg-gray-300 rounded-md border-gray-200 m-5`}
     >
       <div className='flex flex-col'>
         <Typography variant="h5" className="pb-3 font-bold break-all">{note.title}</Typography>
@@ -99,58 +92,79 @@ export const NoteCard = ({ note, isAuthenticated }: { note: any, isAuthenticated
     </Card>
   );
 };
-function NotesList() {
 
-  
+function NotesList() {
   const isAuthenticated = useRecoilValue(authState);
   const [boxes, setBoxes] = useRecoilState(noteState);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const notesPerPage = 6; // Adjust this number for how many notes per page
+
   useEffect(() => {
-     axios.get("https://backend-note-2px9.onrender.com/api/showdata").then(
-(res:AxiosResponse)=>{
+    axios.get("https://backend-note-2px9.onrender.com/api/showdata")
+      .then((res: AxiosResponse) => {
+        setBoxes(res.data);
+      })
+      .catch((e) => {
+        console.log("Error while fetching", e);
+      });
+  }, []);
 
+  // Get the current notes for the page
+  const indexOfLastNote = currentPage * notesPerPage;
+  const indexOfFirstNote = indexOfLastNote - notesPerPage;
+  const currentNotes = boxes.slice(indexOfFirstNote, indexOfLastNote);
 
- setBoxes(res.data);
-
-
-}
-
-).catch((e)=>{
-console.log("error while fetching",e);
-})
-}, [])
- 
- 
-
-
-
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-<div>
-            {boxes.length === 0 ? (
-              <div className="flex flex-col   !justify-center !items-center">
-                <FaRegLightbulb size={300} className="text-gray-300 " />
-                <Typography variant="h2" className="text-gray-400 mt-4">
-                  Notes you add appear here
-                </Typography>
+    <div>
+      {boxes.length === 0 ? (
+        <div className="flex flex-col !justify-center !items-center">
+          <FaRegLightbulb size={300} className="text-gray-300" />
+          <Typography variant="h2" className="text-gray-400 mt-4">
+            Notes you add appear here
+          </Typography>
+        </div>
+      ) : (
+        <>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16'>
+            {currentNotes.map((note, index) => (
+              <div key={index} className="flex justify-center items-center">
+                <NoteCard note={note} isAuthenticated={isAuthenticated} />
               </div>
-            ) : (
-              <div  className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16 '>
-             { boxes.map((note, index) => (
-               
-                  
-                   <div key={index} className="flex justify-center items-center">
-                      <NoteCard note={note} isAuthenticated={isAuthenticated}/>
-                   </div>
-            
-    
             ))}
           </div>
-            )
-      
-          }
-           </div> 
+
+       
+          <div className="flex justify-center space-x-2 mt-4">
+            <Button
+              className="text-gray-500"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              variant="gradient"
+            >
+              &lt;
+            </Button>
+            <Button
+              className="text-gray-500"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={indexOfLastNote >= boxes.length}
+              variant="gradient"
+            >
+                 &gt;
+            </Button>
+          </div>
+          <Typography className="text-center mt-2 text-gray-900 font-semibold">
+            Page {currentPage} of {Math.ceil(boxes.length / notesPerPage)}
+          </Typography>
+        </>
+      )}
+    </div>
   );
 }
+
 export default NotesList;
-export {noteState};
+export { noteState };

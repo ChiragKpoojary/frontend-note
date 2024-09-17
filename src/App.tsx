@@ -6,7 +6,7 @@ import Note from "./components/Note";
 import NotesList from "./components/Notelist";
 import { RecoilRoot } from 'recoil';
 import ReactLoading from 'react-loading';
-
+import Footer from "./components/footer"
 
 function App1() {
   const [isServerReady, setIsServerReady] = useState(false);
@@ -44,7 +44,7 @@ function App1() {
     <div className={`flex flex-col min-h-screen`}>
       <RecoilRoot>
         <Routes>
-          <Route path="/" element={<div><Search /> <CreateNote /> <NotesList /></div>} />
+          <Route path="/" element={<div><Search /> <CreateNote /> <NotesList /> <Footer/></div>} />
           <Route path="/Note" element={<Note />} />
         </Routes>
       </RecoilRoot>
