@@ -41,7 +41,7 @@ const NavSearch = () => {
 
 
     const fuse = new Fuse(allNotes, {
-        keys: ['title', 'description'],
+        keys: ['title', 'description',"tags"],
         threshold: 0.3,
         distance: 100,
         minMatchCharLength: 1,
